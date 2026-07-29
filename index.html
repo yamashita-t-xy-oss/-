@@ -27,7 +27,7 @@
       background-color: var(--bg-color);
       color: var(--text-color);
       padding: 20px;
-      max-width: 800px;
+      max-width: 900px;
       margin: 0 auto;
     }
 
@@ -58,6 +58,14 @@
       display: none !important;
     }
 
+    /* 生徒リスト用のレスポンシブグリッド */
+    .student-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 12px;
+      margin-top: 15px;
+    }
+
     .grid-3 {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -77,15 +85,15 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 20px 10px;
-      font-size: 1.2rem;
+      padding: 15px 10px;
+      font-size: 1.1rem;
       font-weight: bold;
       border: 2px solid #e0e0e0;
       border-radius: 12px;
       background-color: #fafafa;
       cursor: pointer;
       transition: all 0.2s ease;
-      min-height: 100px;
+      min-height: 80px;
     }
 
     .btn:active {
@@ -96,7 +104,8 @@
       background-color: #e8f5e9;
       border-color: #a5d6a7;
       color: #2e7d32;
-      font-size: 1.4rem;
+      font-size: 1.2rem;
+      padding: 18px 5px;
     }
 
     .btn-mood {
@@ -122,6 +131,8 @@
       padding: 15px;
       width: 100%;
       margin-top: 15px;
+      border-radius: 10px;
+      cursor: pointer;
     }
 
     .btn-back {
@@ -156,9 +167,9 @@
     }
 
     .btn-num {
-      width: 50px;
-      height: 50px;
-      font-size: 1.8rem;
+      width: 55px;
+      height: 55px;
+      font-size: 2rem;
       border-radius: 50%;
       border: none;
       background-color: var(--primary-color);
@@ -169,7 +180,7 @@
     .num-display {
       font-size: 2.5rem;
       font-weight: bold;
-      min-width: 60px;
+      min-width: 100px;
       text-align: center;
     }
 
@@ -182,10 +193,9 @@
       border-radius: 8px;
       margin-bottom: 15px;
       font-weight: bold;
-      font-size: 1.1rem;
+      font-size: 1.2rem;
     }
 
-    /* 通知トースト */
     #toast {
       position: fixed;
       bottom: 20px;
@@ -218,11 +228,8 @@
   <!-- 1. 生徒選択画面 -->
   <div id="sec-students" class="container">
     <h2>なまえを えらんでね</h2>
-    <div class="grid-2">
-      <button class="btn btn-student" onclick="selectStudent('生徒A')">生徒A</button>
-      <button class="btn btn-student" onclick="selectStudent('生徒B')">生徒B</button>
-      <button class="btn btn-student" onclick="selectStudent('生徒C')">生徒C</button>
-      <button class="btn btn-student" onclick="selectStudent('生徒D')">生徒D</button>
+    <div class="student-grid" id="student-list-container">
+      <!-- JavaScriptで自動生成されます -->
     </div>
   </div>
 
@@ -285,17 +292,19 @@
     <h2>なにが できた？</h2>
     
     <div class="grid-2">
-      <button class="btn btn-task" onclick="selectTask('紙ちぎり')">📄 紙ちぎり</button>
-      <button class="btn btn-task" onclick="selectTask('紙すき')">🌊 紙すき</button>
-      <button class="btn btn-task" onclick="selectTask('圧搾')">💪 圧搾</button>
-      <button class="btn btn-task" onclick="selectTask('干し')">☀️ 干し</button>
+      <button class="btn btn-task" onclick="selectTask('ラミネートはがし', '枚', 10)">📄 ラミネートはがし</button>
+      <button class="btn btn-task" onclick="selectTask('裁断', 'かご', 1)">✂️ 裁断</button>
+      <button class="btn btn-task" onclick="selectTask('ミキサー', '回', 1)">🌀 ミキサー</button>
+      <button class="btn btn-task" onclick="selectTask('計量', '袋', 1)">⚖️ 計量</button>
+      <button class="btn btn-task" onclick="selectTask('袋詰め', '個', 12)">📦 袋詰め</button>
+      <button class="btn btn-task" onclick="selectTask('ミシン', '袋', 1)">🧵 ミシン</button>
     </div>
 
     <div id="count-area" class="hidden" style="margin-top: 20px; text-align: center;">
       <h3 id="selected-task-display"></h3>
       <div class="number-input">
         <button class="btn-num" onclick="changeCount(-1)">-</button>
-        <span id="num-display" class="num-display">1</span>
+        <span id="num-display" class="num-display">1枚</span>
         <button class="btn-num" onclick="changeCount(1)">+</button>
       </div>
       <button class="btn btn-action" onclick="saveWork()">できた！を きろく</button>
@@ -323,18 +332,60 @@
     // ⚠️ ご自身のGAS（Google Apps Script）のウェブアプリURLをここに設定してください
     const GAS_URL = "https://script.google.com/macros/s/AKfycbzz69-m6p7f2jX2mThmXmQpB101N45-s2Xm24o1d/exec";
 
-    let currentStudent = "";
+    // 24名の生徒マスターデータ（初期設定の作業と初期値）
+    const studentDataList = [
+      { name: "宮﨑", defaultTask: "ラミネートはがし", defaultValue: 10, unit: "枚" },
+      { name: "田中", defaultTask: "ラミネートはがし", defaultValue: 10, unit: "枚" },
+      { name: "奥村", defaultTask: "ラミネートはがし", defaultValue: 10, unit: "枚" },
+      { name: "森田", defaultTask: "ラミネートはがし", defaultValue: 10, unit: "枚" },
+      { name: "小松野", defaultTask: "ラミネートはがし", defaultValue: 10, unit: "枚" },
+      { name: "高宮", defaultTask: "ラミネートはがし", defaultValue: 10, unit: "枚" },
+      { name: "志水", defaultTask: "ラミネートはがし", defaultValue: 10, unit: "枚" },
+      { name: "片山", defaultTask: "ラミネートはがし", defaultValue: 10, unit: "枚" },
+      { name: "岩見", defaultTask: "ラミネートはがし", defaultValue: 10, unit: "枚" },
+      { name: "榎田", defaultTask: "ラミネートはがし", defaultValue: 10, unit: "枚" },
+      { name: "帆保", defaultTask: "裁断", defaultValue: 1, unit: "かご" },
+      { name: "藤本", defaultTask: "裁断", defaultValue: 1, unit: "かご" },
+      { name: "糸平", defaultTask: "裁断", defaultValue: 1, unit: "かご" },
+      { name: "杠", defaultTask: "裁断", defaultValue: 1, unit: "かご" },
+      { name: "安元", defaultTask: "ミキサー", defaultValue: 1, unit: "回" },
+      { name: "堀田", defaultTask: "ミキサー", defaultValue: 1, unit: "回" },
+      { name: "田崎", defaultTask: "ミキサー", defaultValue: 1, unit: "回" },
+      { name: "下田", defaultTask: "計量", defaultValue: 1, unit: "袋" },
+      { name: "北岡", defaultTask: "計量", defaultValue: 1, unit: "袋" },
+      { name: "本田", defaultTask: "袋詰め", defaultValue: 12, unit: "個" },
+      { name: "岩下", defaultTask: "袋詰め", defaultValue: 12, unit: "個" },
+      { name: "松田", defaultTask: "袋詰め", defaultValue: 12, unit: "個" },
+      { name: "中野", defaultTask: "ミシン", defaultValue: 1, unit: "袋" },
+      { name: "後藤", defaultTask: "ミシン", defaultValue: 1, unit: "袋" }
+    ];
+
+    let currentStudentObj = null;
     let selectedTaskName = "";
+    let currentUnit = "";
     let currentCount = 1;
 
-    // --- 音声読み上げ機能 ---
+    // 画面読み込み時に生徒ボタンを動的生成
+    window.onload = function() {
+      const container = document.getElementById('student-list-container');
+      container.innerHTML = '';
+      studentDataList.forEach(student => {
+        const btn = document.createElement('button');
+        btn.className = 'btn btn-student';
+        btn.textContent = student.name;
+        btn.onclick = () => selectStudent(student);
+        container.appendChild(btn);
+      });
+    };
+
+    // 音声読み上げ
     function speakText(text) {
       if ('speechSynthesis' in window) {
-        window.speechSynthesis.cancel(); // 前の音声を止める
+        window.speechSynthesis.cancel();
         const uttr = new SpeechSynthesisUtterance(text);
         uttr.lang = 'ja-JP';
-        uttr.rate = 1.0;  // 速度
-        uttr.pitch = 1.2; // 少し高めの声で聞き取りやすく
+        uttr.rate = 1.0;
+        uttr.pitch = 1.2;
         window.speechSynthesis.speak(uttr);
       }
     }
@@ -349,24 +400,19 @@
     }
 
     // 生徒選択
-    function selectStudent(name) {
-      currentStudent = name;
-      document.getElementById('current-student-display').textContent = "👤 " + name;
+    function selectStudent(studentObj) {
+      currentStudentObj = studentObj;
+      document.getElementById('current-student-display').textContent = "👤 " + studentObj.name;
       showSection('sec-menu');
     }
 
-    // 休憩・相談ボタン処理（「せんせい」と喋る機能を追加）
+    // 休憩・相談ボタン（音声「せんせい」）
     function handleHelp(type) {
-      // 1. 「せんせい」と音声を発する
       speakText('せんせい');
-
-      // 2. トースト通知
       showToast(`${type} を つたえました`);
-
-      // 3. GAS送信（任意記録）
       sendData({
         type: 'help',
-        student: currentStudent,
+        student: currentStudentObj ? currentStudentObj.name : '',
         detail: type
       });
     }
@@ -376,35 +422,49 @@
       showToast(`あさのきぶん：「${mood}」をきろくしました`);
       sendData({
         type: 'morning',
-        student: currentStudent,
+        student: currentStudentObj.name,
         mood: mood
       });
       showSection('sec-menu');
     }
 
     // 作業選択
-    function selectTask(taskName) {
+    function selectTask(taskName, unit, defaultVal) {
       selectedTaskName = taskName;
-      currentCount = 1;
+      currentUnit = unit;
+      
+      // 選択した生徒の主な作業と同じであれば、初期値をセット
+      if (currentStudentObj && currentStudentObj.defaultTask === taskName) {
+        currentCount = currentStudentObj.defaultValue;
+      } else {
+        currentCount = defaultVal || 1;
+      }
+
       document.getElementById('selected-task-display').textContent = taskName + " の かず";
-      document.getElementById('num-display').textContent = currentCount;
+      updateCountDisplay();
       document.getElementById('count-area').classList.remove('hidden');
     }
 
     // 数量変更
     function changeCount(delta) {
       currentCount = Math.max(1, currentCount + delta);
-      document.getElementById('num-display').textContent = currentCount;
+      updateCountDisplay();
+    }
+
+    // 数量表示の更新
+    function updateCountDisplay() {
+      document.getElementById('num-display').textContent = currentCount + " " + currentUnit;
     }
 
     // 作業ログ保存
     function saveWork() {
-      showToast(`${selectedTaskName} ${currentCount}個 できた！`);
+      showToast(`${selectedTaskName} ${currentCount}${currentUnit} できた！`);
       sendData({
         type: 'work',
-        student: currentStudent,
+        student: currentStudentObj.name,
         task: selectedTaskName,
-        count: currentCount
+        count: currentCount,
+        unit: currentUnit
       });
       document.getElementById('count-area').classList.add('hidden');
       showSection('sec-menu');
@@ -415,7 +475,7 @@
       showToast(`ふりかえり：「${mood}」をきろくしました`);
       sendData({
         type: 'evening',
-        student: currentStudent,
+        student: currentStudentObj.name,
         mood: mood
       });
       showSection('sec-menu');
