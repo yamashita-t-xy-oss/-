@@ -16,6 +16,7 @@
       color: #333;
       margin-bottom: 20px;
     }
+    /* 生徒一覧 */
     .student-container {
       display: flex;
       flex-wrap: wrap;
@@ -48,10 +49,10 @@
       color: #444;
     }
 
-    /* 選択肢エリア */
-    #action-options {
+    /* パネル共通デザイン */
+    .modal-panel {
       display: none;
-      margin-top: 30px;
+      margin-top: 25px;
       padding: 20px;
       background: #ffffff;
       border-radius: 16px;
@@ -60,18 +61,29 @@
       margin-left: auto;
       margin-right: auto;
     }
-    #action-options h2 {
+    .modal-panel h2 {
       margin-top: 0;
       color: #2c3e50;
     }
-    .option-buttons {
+    .button-group {
       display: flex;
       justify-content: center;
       gap: 12px;
       flex-wrap: wrap;
     }
-    .btn-option {
-      background-color: #4CAF50;
+    .btn-main {
+      background-color: #2196F3; /* 青色 */
+      color: white;
+      border: none;
+      padding: 14px 20px;
+      font-size: 18px;
+      font-weight: bold;
+      border-radius: 10px;
+      cursor: pointer;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+    .btn-sub {
+      background-color: #4CAF50; /* 緑色 */
       color: white;
       border: none;
       padding: 12px 20px;
@@ -81,9 +93,6 @@
       cursor: pointer;
       box-shadow: 0 2px 4px rgba(0,0,0,0.2);
     }
-    .btn-option:active {
-      background-color: #3e8e41;
-    }
     .btn-close {
       background-color: #888;
       margin-top: 15px;
@@ -92,11 +101,10 @@
 </head>
 <body>
 
-  <h1>だれですか？</h1>
+  <h1>なまえをおしてね！</h1>
 
   <!-- 生徒一覧 -->
   <div class="student-container">
-    <!-- 「せんせい」読み上げの生徒 -->
     <div class="student-card" onclick="selectStudent('藤本')">
       <img src="images/藤本.jpeg" alt="藤本" onerror="this.src='https://via.placeholder.com/100?text=No+Image'">
       <p>藤本</p>
@@ -161,17 +169,34 @@
     </div>
   </div>
 
-  <!-- 選択肢メニュー（動的にボタンが作られます） -->
-  <div id="action-options">
-    <h2 id="target-student-name">なにをする？</h2>
-    <div class="option-buttons" id="buttons-container"></div>
+  <!-- ステップ1：カテゴリー選択メニュー -->
+  <div id="category-panel" class="modal-panel">
+    <h2 id="selected-student-title">どうしますか？</h2>
+    <div class="button-group">
+      <button class="btn-main" onclick="onCategorySelect('あさのきぶん')">あさのきぶん</button>
+      <button class="btn-main" onclick="onCategorySelect('さぎょう')">さぎょう</button>
+      <button class="btn-main" onclick="onCategorySelect('きゅうけい')">きゅうけい</button>
+      <button class="btn-main" onclick="onCategorySelect('おつかれさま')">おつかれさま</button>
+    </div>
     <div>
-      <button class="btn-option btn-close" onclick="hideOptions()">とじる</button>
+      <button class="btn-main btn-close" onclick="closeAllPanels()">とじる</button>
+    </div>
+  </div>
+
+  <!-- ステップ2：休憩の選択肢メニュー -->
+  <div id="kyukei-panel" class="modal-panel">
+    <h2>なにをする？</h2>
+    <div class="button-group" id="kyukei-buttons"></div>
+    <div>
+      <button class="btn-main btn-close" onclick="closeKyukeiPanel()">もどる</button>
     </div>
   </div>
 
   <script>
-    // ① 学年ごとの選択肢リスト
+    // 現在選択されている生徒の名前
+    let currentStudent = '';
+
+    // ① 学年ごとの「きゅうけい」選択肢リスト
     const gradeOptions = {
       '1年': ['トイレ', 'さんぽ', 'おちゃ'],
       '2年': ['トイレ', 'さんぽ', 'おちゃ'],
@@ -188,7 +213,7 @@
       '志水': { type: 'teacher' },
       '森田': { type: 'teacher' },
 
-      // 選択肢タイプ（生徒ごとに学年を指定）
+      // 選択肢タイプ
       '下田': { type: 'options', grade: '1年' },
       '中野孝明': { type: 'options', grade: '1年' },
       '北岡': { type: 'options', grade: '2年' },
@@ -218,48 +243,69 @@
       speechSynthesis.speak(uttr);
     }
 
-    // 生徒を選んだ時の処理
+    // 1. 生徒を選んだ時の処理
     function selectStudent(name) {
-      const student = studentsData[name] || { type: 'options', grade: '1年' };
+      currentStudent = name;
+      speak(name);
 
-      if (student.type === 'teacher') {
-        speak('せんせい');
-        hideOptions();
+      // カテゴリーメニューを表示する
+      const panel = document.getElementById('category-panel');
+      const title = document.getElementById('selected-student-title');
+      if (panel && title) {
+        title.innerText = name + 'さん、どうしますか？';
+        document.getElementById('kyukei-panel').style.display = 'none';
+        panel.style.display = 'block';
+      }
+    }
+
+    // 2. カテゴリーを選んだ時の処理
+    function onCategorySelect(category) {
+      if (category === 'きゅうけい') {
+        const student = studentsData[currentStudent] || { type: 'options', grade: '1年' };
+
+        if (student.type === 'teacher') {
+          // 「せんせい」読み上げタイプの生徒
+          speak('せんせい');
+        } else {
+          // 選択肢タイプの生徒 ➔ 学年ごとのメニューを開く
+          speak('きゅうけい');
+          showKyukeiOptions(student.grade);
+        }
       } else {
-        speak(name);
-        showOptions(name, student.grade);
+        // 「あさのきぶん」「さぎょう」「おつかれさま」を選んだ場合
+        speak(category);
       }
     }
 
-    // 学年に応じたボタンを作って表示する処理
-    function showOptions(name, grade) {
-      const optionsDiv = document.getElementById('action-options');
-      const title = document.getElementById('target-student-name');
-      const container = document.getElementById('buttons-container');
+    // 休憩メニューを表示する処理
+    function showKyukeiOptions(grade) {
+      document.getElementById('category-panel').style.display = 'none';
+      const kyukeiPanel = document.getElementById('kyukei-panel');
+      const container = document.getElementById('kyukei-buttons');
 
-      if (optionsDiv && title && container) {
-        title.innerText = name + 'さん（' + grade + '）、なにをする？';
-        
-        // 学年に合わせたボタン一覧を取得（未設定なら1年のものを表示）
-        const optionsList = gradeOptions[grade] || gradeOptions['1年'];
+      const optionsList = gradeOptions[grade] || gradeOptions['1年'];
+      container.innerHTML = '';
 
-        // ボタンを動的に生成
-        container.innerHTML = '';
-        optionsList.forEach(opt => {
-          const btn = document.createElement('button');
-          btn.className = 'btn-option';
-          btn.innerText = opt;
-          btn.onclick = function() { speak(opt); };
-          container.appendChild(btn);
-        });
+      optionsList.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'btn-sub';
+        btn.innerText = opt;
+        btn.onclick = function() { speak(opt); };
+        container.appendChild(btn);
+      });
 
-        optionsDiv.style.display = 'block';
-      }
+      kyukeiPanel.style.display = 'block';
     }
 
-    function hideOptions() {
-      const optionsDiv = document.getElementById('action-options');
-      if (optionsDiv) optionsDiv.style.display = 'none';
+    // モード・パネルを閉じる処理
+    function closeAllPanels() {
+      document.getElementById('category-panel').style.display = 'none';
+      document.getElementById('kyukei-panel').style.display = 'none';
+    }
+
+    function closeKyukeiPanel() {
+      document.getElementById('kyukei-panel').style.display = 'none';
+      document.getElementById('category-panel').style.display = 'block';
     }
 
     if (typeof speechSynthesis !== 'undefined') {
