@@ -12,58 +12,78 @@
       padding: 20px;
       margin: 0;
     }
-    h1 {
-      color: #333;
-      margin-bottom: 20px;
-    }
+    h1 { color: #333; margin-bottom: 20px; }
+    h2 { color: #444; margin-bottom: 15px; }
 
-    /* ボタンデザイン */
-    .btn-grade {
-      background-color: #FF9800; /* オレンジ色 */
-      color: white;
+    /* ボタン共通 */
+    .btn-grade, .btn-sub, .btn-done {
       border: none;
-      padding: 20px 32px;
-      font-size: 24px;
+      color: white;
       font-weight: bold;
       border-radius: 12px;
       cursor: pointer;
       box-shadow: 0 4px 6px rgba(0,0,0,0.15);
-      transition: transform 0.2s;
+      transition: transform 0.1s;
     }
-    .btn-grade:active {
+    .btn-grade:active, .btn-cat:active, .btn-sub:active, .btn-done:active {
       transform: scale(0.95);
     }
 
-    .btn-main {
-      background-color: #2196F3; /* 青色 */
-      color: white;
-      border: none;
-      padding: 16px 24px;
-      font-size: 20px;
-      font-weight: bold;
-      border-radius: 10px;
-      cursor: pointer;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    .btn-grade {
+      background-color: #FF9800;
+      padding: 20px 32px;
+      font-size: 24px;
     }
 
-    .btn-sub {
-      background-color: #4CAF50; /* 緑色 */
+    .btn-cat-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin: 20px auto 0;
+      max-width: 600px;
+    }
+
+    .btn-cat {
       color: white;
       border: none;
-      padding: 14px 22px;
-      font-size: 20px;
+      padding: 28px 15px;
+      font-size: 26px;
       font-weight: bold;
-      border-radius: 8px;
+      border-radius: 16px;
       cursor: pointer;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.18);
+    }
+
+    .btn-morning { background-color: #FF9800; }
+    .btn-work    { background-color: #2196F3; }
+    .btn-break   { background-color: #4CAF50; }
+    .btn-thanks  { background-color: #E91E63; }
+
+    .btn-sub {
+      background-color: #009688;
+      padding: 16px 24px;
+      font-size: 22px;
+    }
+
+    .btn-done {
+      background-color: #FF5722;
+      padding: 25px 40px;
+      font-size: 32px;
+      border-radius: 20px;
     }
 
     .btn-close {
-      background-color: #888;
+      background-color: #757575;
+      color: white;
+      border: none;
+      padding: 14px 28px;
+      font-size: 18px;
+      font-weight: bold;
+      border-radius: 10px;
+      cursor: pointer;
       margin-top: 25px;
     }
 
-    /* レイアウト */
     .button-group {
       display: flex;
       justify-content: center;
@@ -88,10 +108,6 @@
       width: 130px;
       box-shadow: 0 4px 6px rgba(0,0,0,0.1);
       cursor: pointer;
-      transition: transform 0.2s;
-    }
-    .student-card:active {
-      transform: scale(0.95);
     }
     .student-card img {
       width: 100px;
@@ -106,34 +122,34 @@
       font-size: 18px;
     }
 
-    /* 各画面パネル（初期状態は隠す） */
-    .screen-panel {
-      display: none;
-      margin-top: 20px;
-    }
+    .screen-panel { display: none; margin-top: 20px; }
     .modal-panel {
       display: none;
-      margin-top: 40px;
+      margin: 30px auto 0;
       padding: 30px 20px;
       background: #ffffff;
-      border-radius: 16px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-      max-width: 500px;
-      margin-left: auto;
-      margin-right: auto;
+      border-radius: 20px;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+      max-width: 650px;
+    }
+
+    .counter-badge {
+      font-size: 24px;
+      color: #333;
+      margin-top: 15px;
+      font-weight: bold;
     }
   </style>
 </head>
 <body>
 
-  <!-- ステップ0：学年選択画面（スタート画面） -->
+  <!-- ステップ0：学年選択画面 -->
   <div id="grade-screen" style="display: block;">
     <h1>がくねんをえらんでね！</h1>
     <div class="button-group">
       <button class="btn-grade" onclick="selectGrade('1年')">1ねん</button>
       <button class="btn-grade" onclick="selectGrade('2年')">2ねん</button>
       <button class="btn-grade" onclick="selectGrade('3年')">3ねん</button>
-      <button class="btn-grade" onclick="selectGrade('4年')">4ねん</button>
     </div>
   </div>
 
@@ -142,65 +158,98 @@
     <h1 id="name-screen-title">なまえをおしてね！</h1>
     <div class="student-container" id="student-list"></div>
     <div style="margin-top: 30px;">
-      <button class="btn-main btn-close" onclick="showGradeScreen()">もどる</button>
+      <button class="btn-close" onclick="showGradeScreen()">もどる</button>
     </div>
   </div>
 
-  <!-- ステップ2：目的選択画面 -->
+  <!-- ステップ2：メインメニュー画面 -->
   <div id="category-panel" class="modal-panel">
     <h2 id="selected-student-title">どうしますか？</h2>
-    <div class="button-group">
-      <button class="btn-main" onclick="onCategorySelect('あさのきぶん')">あさのきぶん</button>
-      <button class="btn-main" onclick="onCategorySelect('さぎょう')">さぎょう</button>
-      <button class="btn-main" onclick="onCategorySelect('きゅうけい')">きゅうけい</button>
-      <button class="btn-main" onclick="onCategorySelect('おつかれさま')">おつかれさま</button>
+    <div class="btn-cat-container">
+      <button class="btn-cat btn-morning" onclick="onCategorySelect('あさのきぶん')">あさのきぶん</button>
+      <button class="btn-cat btn-work" onclick="onCategorySelect('さぎょう')">さぎょう</button>
+      <button class="btn-cat btn-break" onclick="onCategorySelect('きゅうけい')">きゅうけい</button>
+      <button class="btn-cat btn-thanks" onclick="onCategorySelect('おつかれさま')">おつかれさま</button>
     </div>
     <div>
-      <button class="btn-main btn-close" onclick="showNameScreen()">もどる</button>
+      <button class="btn-close" onclick="showNameScreen()">もどる</button>
     </div>
   </div>
 
-  <!-- ステップ3：休憩の選択肢画面 -->
-  <div id="kyukei-panel" class="modal-panel">
-    <h2>なにをする？</h2>
-    <div class="button-group" id="kyukei-buttons"></div>
+  <!-- ステップ3：汎用選択肢画面（あさのきぶん / きゅうけい / おつかれさま 用） -->
+  <div id="sub-panel" class="modal-panel">
+    <h2 id="sub-panel-title">えらんでね</h2>
+    <div class="button-group" id="sub-buttons"></div>
     <div>
-      <button class="btn-main btn-close" onclick="showCategoryPanel()">もどる</button>
+      <button class="btn-close" onclick="showCategoryPanel()">もどる</button>
+    </div>
+  </div>
+
+  <!-- ステップ3-B：作業選択画面 -->
+  <div id="work-select-panel" class="modal-panel">
+    <h2>どのさぎょうをしますか？</h2>
+    <div class="button-group" id="work-buttons"></div>
+    <div>
+      <button class="btn-close" onclick="showCategoryPanel()">もどる</button>
+    </div>
+  </div>
+
+  <!-- ステップ4：出来高（できた）画面 -->
+  <div id="work-done-panel" class="modal-panel">
+    <h2 id="current-work-title">さぎょう</h2>
+    <div style="margin: 25px 0;">
+      <button class="btn-done" onclick="countUpWork()">できた！</button>
+    </div>
+    <div class="counter-badge" id="work-count-display">できた かず: 0 回</div>
+    <div>
+      <button class="btn-close" onclick="showWorkSelectPanel()">もどる</button>
     </div>
   </div>
 
   <script>
     let currentGrade = '';
     let currentStudentKey = '';
+    let currentWorkName = '';
+    let workCounts = {}; // 生徒・作業ごとの出来高記録
 
-    // ① 生徒マスターデータ（名前・読み方変更適用済み）
+    // 生徒マスターデータ
     const studentsMaster = {
-      // ■ 「せんせい」と読み上げる生徒（5名）
+      // 1年生
+      'いわした': { name: 'いわした', type: 'options', grade: '1年', img: 'images/岩下侑樹.JPG' },
       'ふじもと': { name: 'ふじもと', type: 'teacher', grade: '1年', img: 'images/藤本.jpeg' },
-      'みやざき': { name: 'みやざき', type: 'teacher', grade: '2年', img: 'images/宮﨑.jpeg' },
-      'たかみや': { name: 'たかみや', type: 'teacher', grade: '3年', img: 'images/高宮.jpeg' },
-      'しみず':   { name: 'しみず',   type: 'teacher', grade: '4年', img: 'images/志水.jpeg' },
-      'もりた':   { name: 'もりた',   type: 'teacher', grade: '4年', img: 'images/森田.jpeg' },
+      'ほんだ':   { name: 'ほんだ',   type: 'options', grade: '1年', img: 'images/ほんだ.jpeg' },
+      'ほった':   { name: 'ほった',   type: 'options', grade: '1年', img: 'images/堀田朋也.JPG' },
+      'ごとう':   { name: 'ごとう',   type: 'options', grade: '1年', img: 'images/ごとう.jpeg' },
+      'いとひら': { name: 'いとひら', type: 'options', grade: '1年', img: 'images/いとひら.jpeg' },
 
-      // ■ 選択肢が出る生徒（読み方を『ほった』『ほぼ』『いわした』に修正）
-      'しもだ':   { name: 'しもだ',   type: 'options', grade: '1年', img: 'images/下田.jpeg' },
-      'なかの':   { name: 'なかの',   type: 'options', grade: '1年', img: 'images/中野孝明.JPG' },
+      // 2年生
       'きたおか': { name: 'きたおか', type: 'options', grade: '2年', img: 'images/北岡.jpeg' },
-      'ほった':   { name: 'ほった',   type: 'options', grade: '2年', img: 'images/堀田朋也.JPG' }, // ほりた➔ほった
-      'おくむら': { name: 'おくむら', type: 'options', grade: '3年', img: 'images/奥村.jpeg' },
-      'やすもと': { name: 'やすもと', type: 'options', grade: '3年', img: 'images/安元瞭太(1).JPG' },
-      'こまつの': { name: 'こまつの', type: 'options', grade: '4年', img: 'images/小松野.jpeg' },
-      'いわした': { name: 'いわした', type: 'options', grade: '4年', img: 'images/岩下侑樹.JPG' }, // いわた➔いわした
-      'いわみ':   { name: 'いわみ',   type: 'options', grade: '4年', img: 'images/岩見樹.JPG' },
-      'ほぼ':     { name: 'ほぼ',     type: 'options', grade: '4年', img: 'images/帆保和将.JPG' }  // ほほ➔ほぼ
+      'しもだ':   { name: 'しもだ',   type: 'options', grade: '2年', img: 'images/下田.jpeg' },
+      'みやざき': { name: 'みやざき', type: 'teacher', grade: '2年', img: 'images/宮﨑.jpeg' },
+      'おくむら': { name: 'おくむら', type: 'options', grade: '2年', img: 'images/奥村.jpeg' },
+      'こまつの': { name: 'こまつの', type: 'options', grade: '2年', img: 'images/小松野.jpeg' },
+      'たかみや': { name: 'たかみや', type: 'teacher', grade: '2年', img: 'images/高宮.jpeg' },
+      'かたやま': { name: 'かたやま', type: 'options', grade: '2年', img: 'images/かたやま.jpeg' },
+      'しみず':   { name: 'しみず',   type: 'teacher', grade: '2年', img: 'images/志水.jpeg' },
+      'まつだ':   { name: 'まつだ',   type: 'options', grade: '2年', img: 'images/まつだ.jpeg' },
+      'もりた':   { name: 'もりた',   type: 'teacher', grade: '2年', img: 'images/森田.jpeg' },
+
+      // 3年生
+      'たさき':   { name: 'たさき',   type: 'options', grade: '3年', img: 'images/たさき.jpeg' },
+      'ゆずりは': { name: 'ゆずりは', type: 'options', grade: '3年', img: 'images/ゆずりは.jpeg' },
+      'たなか':   { name: 'たなか',   type: 'options', grade: '3年', img: 'images/たなか.jpeg' },
+      'えのきだ': { name: 'えのきだ', type: 'options', grade: '3年', img: 'images/えのきだ.jpeg' },
+      'なかの':   { name: 'なかの',   type: 'options', grade: '3年', img: 'images/中野孝明.JPG' },
+      'いわみ':   { name: 'いわみ',   type: 'options', grade: '3年', img: 'images/岩見樹.JPG' },
+      'ほぼ':     { name: 'ほぼ',     type: 'options', grade: '3年', img: 'images/帆保和将.JPG' }
     };
 
-    // ② 学年ごとの「きゅうけい」選択肢リスト
-    const gradeOptions = {
-      '1年': ['トイレ', 'さんぽ', 'おちゃ'],
-      '2年': ['トイレ', 'さんぽ', 'おちゃ'],
-      '3年': ['トイレ', 'おちゃ', 'あそぶ', 'やすむ'],
-      '4年': ['トイレ', 'おちゃ', 'じゆうじかん', 'きゅうけい']
+    // 選択肢マスターデータ
+    const categoryOptions = {
+      'あさのきぶん': ['げんき', 'ふつう', 'ねむい', 'つかれた'],
+      'きゅうけい': ['トイレ', 'さんぽ', 'おちゃ', 'やすむ'],
+      'おつかれさま': ['さようなら', 'またね', 'ありがとう'],
+      'さぎょう': ['さぎょうA', 'さぎょうB', 'さぎょうC']
     };
 
     // 音声読み上げ関数
@@ -220,14 +269,13 @@
       speechSynthesis.speak(uttr);
     }
 
-    // 1. 学年を選択したとき
+    // 1. 学年選択
     function selectGrade(grade) {
       currentGrade = grade;
       speak(grade);
 
       document.getElementById('grade-screen').style.display = 'none';
 
-      // 選んだ学年の生徒カードを生成して表示
       const listContainer = document.getElementById('student-list');
       listContainer.innerHTML = '';
 
@@ -238,7 +286,7 @@
           card.className = 'student-card';
           card.onclick = function() { selectStudent(key); };
           card.innerHTML = `
-            <img src="${student.img}" alt="${student.name}" onerror="this.src='https://via.placeholder.com/100?text=No+Image'">
+            <img src="${student.img}" alt="${student.name}" onerror="this.src='https://via.placeholder.com/100?text=${encodeURIComponent(student.name)}'">
             <p>${student.name}</p>
           `;
           listContainer.appendChild(card);
@@ -249,7 +297,7 @@
       document.getElementById('name-screen').style.display = 'block';
     }
 
-    // 2. 生徒を選択したとき
+    // 2. 生徒選択
     function selectStudent(key) {
       currentStudentKey = key;
       const student = studentsMaster[key];
@@ -258,36 +306,42 @@
       document.getElementById('name-screen').style.display = 'none';
 
       const panel = document.getElementById('category-panel');
-      const title = document.getElementById('selected-student-title');
-      title.innerText = student.name + 'さん、どうしますか？';
+      document.getElementById('selected-student-title').innerText = student.name + 'さん、どうしますか？';
       panel.style.display = 'block';
     }
 
-    // 3. 目的を選択したとき
+    // 3. カテゴリー選択分岐
     function onCategorySelect(category) {
-      if (category === 'きゅうけい') {
-        const student = studentsMaster[currentStudentKey];
+      const student = studentsMaster[currentStudentKey];
 
+      if (category === 'きゅうけい') {
         if (student.type === 'teacher') {
           speak('せんせい');
         } else {
           speak('きゅうけい');
-          showKyukeiOptions(student.grade);
+          showSubOptions('きゅうけい');
         }
+      } else if (category === 'さぎょう') {
+        speak('さぎょう');
+        showWorkSelectPanel();
       } else {
         speak(category);
+        showSubOptions(category);
       }
     }
 
-    // 休憩の選択肢画面を表示
-    function showKyukeiOptions(grade) {
+    // サブ選択肢表示（あさのきぶん / きゅうけい / おつかれさま）
+    function showSubOptions(category) {
       document.getElementById('category-panel').style.display = 'none';
-      const container = document.getElementById('kyukei-buttons');
+      
+      const title = document.getElementById('sub-panel-title');
+      title.innerText = category;
 
-      const optionsList = gradeOptions[grade] || gradeOptions['1年'];
+      const container = document.getElementById('sub-buttons');
       container.innerHTML = '';
 
-      optionsList.forEach(opt => {
+      const opts = categoryOptions[category] || [];
+      opts.forEach(opt => {
         const btn = document.createElement('button');
         btn.className = 'btn-sub';
         btn.innerText = opt;
@@ -295,22 +349,75 @@
         container.appendChild(btn);
       });
 
-      document.getElementById('kyukei-panel').style.display = 'block';
+      document.getElementById('sub-panel').style.display = 'block';
     }
 
-    // 画面切り替え（もどるボタン用）
+    // 作業選択画面を表示
+    function showWorkSelectPanel() {
+      hideAllModals();
+      const container = document.getElementById('work-buttons');
+      container.innerHTML = '';
+
+      const works = categoryOptions['さぎょう'];
+      works.forEach(work => {
+        const btn = document.createElement('button');
+        btn.className = 'btn-sub';
+        btn.innerText = work;
+        btn.onclick = function() { selectWork(work); };
+        container.appendChild(btn);
+      });
+
+      document.getElementById('work-select-panel').style.display = 'block';
+    }
+
+    // 作業決定 ➔ できた画面へ
+    function selectWork(workName) {
+      currentWorkName = workName;
+      speak(workName);
+
+      hideAllModals();
+      document.getElementById('current-work-title').innerText = workName;
+      updateWorkDisplay();
+      document.getElementById('work-done-panel').style.display = 'block';
+    }
+
+    // 出来高カウントアップ処理
+    function countUpWork() {
+      const key = currentStudentKey + '_' + currentWorkName;
+      workCounts[key] = (workCounts[key] || 0) + 1;
+      
+      speak('できた！');
+      updateWorkDisplay();
+    }
+
+    // カウント表示更新
+    function updateWorkDisplay() {
+      const key = currentStudentKey + '_' + currentWorkName;
+      const count = workCounts[key] || 0;
+      document.getElementById('work-count-display').innerText = 'できた かず: ' + count + ' 回';
+    }
+
+    // 画面リセット・もどる補助関数
+    function hideAllModals() {
+      document.getElementById('category-panel').style.display = 'none';
+      document.getElementById('sub-panel').style.display = 'none';
+      document.getElementById('work-select-panel').style.display = 'none';
+      document.getElementById('work-done-panel').style.display = 'none';
+    }
+
     function showGradeScreen() {
+      hideAllModals();
       document.getElementById('name-screen').style.display = 'none';
       document.getElementById('grade-screen').style.display = 'block';
     }
 
     function showNameScreen() {
-      document.getElementById('category-panel').style.display = 'none';
+      hideAllModals();
       document.getElementById('name-screen').style.display = 'block';
     }
 
     function showCategoryPanel() {
-      document.getElementById('kyukei-panel').style.display = 'none';
+      hideAllModals();
       document.getElementById('category-panel').style.display = 'block';
     }
 
