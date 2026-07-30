@@ -16,7 +16,6 @@
       color: #333;
       margin-bottom: 20px;
     }
-    /* 生徒一覧のグリッド配置 */
     .student-container {
       display: flex;
       flex-wrap: wrap;
@@ -25,7 +24,6 @@
       max-width: 1000px;
       margin: 0 auto;
     }
-    /* 生徒カード（ボタン） */
     .student-card {
       background: white;
       border-radius: 12px;
@@ -50,7 +48,7 @@
       color: #444;
     }
 
-    /* 選択肢エリア（初期状態は隠す） */
+    /* 選択肢エリア */
     #action-options {
       display: none;
       margin-top: 30px;
@@ -69,14 +67,14 @@
     .option-buttons {
       display: flex;
       justify-content: center;
-      gap: 15px;
+      gap: 12px;
       flex-wrap: wrap;
     }
     .btn-option {
       background-color: #4CAF50;
       color: white;
       border: none;
-      padding: 12px 24px;
+      padding: 12px 20px;
       font-size: 18px;
       font-weight: bold;
       border-radius: 8px;
@@ -96,8 +94,9 @@
 
   <h1>だれですか？</h1>
 
-  <!-- 生徒一覧（画像と名前） -->
+  <!-- 生徒一覧 -->
   <div class="student-container">
+    <!-- 「せんせい」読み上げの生徒 -->
     <div class="student-card" onclick="selectStudent('藤本')">
       <img src="images/藤本.jpeg" alt="藤本" onerror="this.src='https://via.placeholder.com/100?text=No+Image'">
       <p>藤本</p>
@@ -162,70 +161,109 @@
     </div>
   </div>
 
-  <!-- 選択肢メニュー（「せんせい」以外の生徒を押したときに登場） -->
+  <!-- 選択肢メニュー（動的にボタンが作られます） -->
   <div id="action-options">
     <h2 id="target-student-name">なにをする？</h2>
-    <div class="option-buttons">
-      <button class="btn-option" onclick="speak('トイレ')">トイレ</button>
-      <button class="btn-option" onclick="speak('さんぽ')">さんぽ</button>
-      <button class="btn-option" onclick="speak('おちゃ')">おちゃ</button>
-    </div>
+    <div class="option-buttons" id="buttons-container"></div>
     <div>
       <button class="btn-option btn-close" onclick="hideOptions()">とじる</button>
     </div>
   </div>
 
   <script>
-    // 生徒ごとのタイプ設定
-    const studentsData = {
-      // 「せんせい」と喋る5名
-      '藤本': 'teacher',
-      '宮﨑': 'teacher',
-      '高宮': 'teacher',
-      '志水': 'teacher',
-      '森田': 'teacher',
-
-      // それ以外はすべて 'options'（選択肢表示）
+    // ① 学年ごとの選択肢リスト
+    const gradeOptions = {
+      '1年': ['トイレ', 'さんぽ', 'おちゃ'],
+      '2年': ['トイレ', 'さんぽ', 'おちゃ'],
+      '3年': ['トイレ', 'おちゃ', 'あそぶ', 'やすむ'],
+      '4年': ['トイレ', 'おちゃ', 'じゆうじかん', 'きゅうけい']
     };
 
-    // 音声読み上げ処理
+    // ② 生徒ごとの設定（タイプと学年）
+    const studentsData = {
+      // 「せんせい」読み上げタイプ
+      '藤本': { type: 'teacher' },
+      '宮﨑': { type: 'teacher' },
+      '高宮': { type: 'teacher' },
+      '志水': { type: 'teacher' },
+      '森田': { type: 'teacher' },
+
+      // 選択肢タイプ（生徒ごとに学年を指定）
+      '下田': { type: 'options', grade: '1年' },
+      '中野孝明': { type: 'options', grade: '1年' },
+      '北岡': { type: 'options', grade: '2年' },
+      '堀田朋也': { type: 'options', grade: '2年' },
+      '奥村': { type: 'options', grade: '3年' },
+      '安元瞭太': { type: 'options', grade: '3年' },
+      '小松野': { type: 'options', grade: '4年' },
+      '岩下侑樹': { type: 'options', grade: '4年' },
+      '岩見樹': { type: 'options', grade: '4年' },
+      '帆保和将': { type: 'options', grade: '4年' }
+    };
+
+    // 自然な声で読み上げる関数
     function speak(text) {
+      speechSynthesis.cancel();
       const uttr = new SpeechSynthesisUtterance(text);
       uttr.lang = 'ja-JP';
+      uttr.rate = 0.9;
+      uttr.pitch = 1.1;
+
+      const voices = speechSynthesis.getVoices();
+      const naturalVoice = voices.find(v => 
+        v.lang.includes('ja') && (v.name.includes('Google') || v.name.includes('Natural') || v.name.includes('Kyoko'))
+      );
+      if (naturalVoice) uttr.voice = naturalVoice;
+
       speechSynthesis.speak(uttr);
     }
 
-    // カードを押したときの処理
+    // 生徒を選んだ時の処理
     function selectStudent(name) {
-      const type = studentsData[name] || 'options';
+      const student = studentsData[name] || { type: 'options', grade: '1年' };
 
-      if (type === 'teacher') {
-        // 「せんせい」と読み上げ、選択肢は非表示に
+      if (student.type === 'teacher') {
         speak('せんせい');
         hideOptions();
       } else {
-        // 名前を読み上げ、選択肢エリアを表示
         speak(name);
-        showOptions(name);
+        showOptions(name, student.grade);
       }
     }
 
-    // 選択肢を表示する処理
-    function showOptions(name) {
+    // 学年に応じたボタンを作って表示する処理
+    function showOptions(name, grade) {
       const optionsDiv = document.getElementById('action-options');
       const title = document.getElementById('target-student-name');
-      if (optionsDiv && title) {
-        title.innerText = name + 'さん、なにをする？';
+      const container = document.getElementById('buttons-container');
+
+      if (optionsDiv && title && container) {
+        title.innerText = name + 'さん（' + grade + '）、なにをする？';
+        
+        // 学年に合わせたボタン一覧を取得（未設定なら1年のものを表示）
+        const optionsList = gradeOptions[grade] || gradeOptions['1年'];
+
+        // ボタンを動的に生成
+        container.innerHTML = '';
+        optionsList.forEach(opt => {
+          const btn = document.createElement('button');
+          btn.className = 'btn-option';
+          btn.innerText = opt;
+          btn.onclick = function() { speak(opt); };
+          container.appendChild(btn);
+        });
+
         optionsDiv.style.display = 'block';
       }
     }
 
-    // 選択肢を隠す処理
     function hideOptions() {
       const optionsDiv = document.getElementById('action-options');
-      if (optionsDiv) {
-        optionsDiv.style.display = 'none';
-      }
+      if (optionsDiv) optionsDiv.style.display = 'none';
+    }
+
+    if (typeof speechSynthesis !== 'undefined') {
+      speechSynthesis.onvoiceschanged = function() { speechSynthesis.getVoices(); };
     }
   </script>
 </body>
