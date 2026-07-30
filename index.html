@@ -3,542 +3,229 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>できた！ノート（紙工班）</title>
+  <title>生徒選択画面</title>
   <style>
-    :root {
-      --primary-color: #4CAF50;
-      --primary-hover: #45a049;
-      --bg-color: #f4f7f6;
-      --card-bg: #ffffff;
-      --text-color: #333333;
-      --accent-color: #FF9800;
-      --danger-color: #f44336;
-      --info-color: #2196F3;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
-    }
-
     body {
-      background-color: var(--bg-color);
-      color: var(--text-color);
+      font-family: sans-serif;
+      text-align: center;
+      background-color: #f4f7f6;
       padding: 20px;
-      max-width: 900px;
+      margin: 0;
+    }
+    h1 {
+      color: #333;
+      margin-bottom: 20px;
+    }
+    /* 生徒一覧のグリッド配置 */
+    .student-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 15px;
+      max-width: 1000px;
       margin: 0 auto;
     }
-
-    header {
-      text-align: center;
-      margin-bottom: 20px;
+    /* 生徒カード（ボタン） */
+    .student-card {
+      background: white;
+      border-radius: 12px;
       padding: 10px;
-      background-color: var(--card-bg);
-      border-radius: 12px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-    }
-
-    h1 {
-      font-size: 1.8rem;
-      color: var(--primary-color);
-      margin-bottom: 5px;
-    }
-
-    .container {
-      background-color: var(--card-bg);
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-      margin-bottom: 20px;
-    }
-
-    .hidden {
-      display: none !important;
-    }
-
-    /* 学年選択ボタン */
-    .grade-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 15px;
-      margin-top: 15px;
-    }
-
-    .btn-grade {
-      background-color: #e8eaf6;
-      border-color: #c5cae9;
-      color: #1a237e;
-      font-size: 1.5rem;
-      padding: 25px 10px;
-    }
-
-    /* 顔写真付き生徒カードのグリッド */
-    .student-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-      gap: 15px;
-      margin-top: 15px;
-    }
-
-    .btn-student-card {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 12px 8px;
-      background-color: #e8f5e9;
-      border: 2px solid #a5d6a7;
-      border-radius: 12px;
+      width: 130px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
       cursor: pointer;
-      transition: transform 0.2s, background-color 0.2s;
+      transition: transform 0.2s, box-shadow 0.2s;
     }
-
-    .btn-student-card:active {
+    .student-card:active {
       transform: scale(0.95);
-      background-color: #c8e6c9;
     }
-
-    .student-photo-wrapper {
-      width: 75px;
-      height: 75px;
-      border-radius: 50%;
-      overflow: hidden;
-      background-color: #ffffff;
-      border: 3px solid #4CAF50;
-      margin-bottom: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .student-photo {
-      width: 100%;
-      height: 100%;
+    .student-card img {
+      width: 100px;
+      height: 100px;
       object-fit: cover;
-    }
-
-    .student-name {
-      font-size: 1.1rem;
-      font-weight: bold;
-      color: #2e7d32;
-    }
-
-    .grid-3 {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 15px;
-      margin-top: 15px;
-    }
-
-    .grid-2 {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 15px;
-      margin-top: 15px;
-    }
-
-    .btn {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 15px 10px;
-      font-size: 1.1rem;
-      font-weight: bold;
-      border: 2px solid #e0e0e0;
-      border-radius: 12px;
-      background-color: #fafafa;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      min-height: 80px;
-    }
-
-    .btn:active {
-      transform: scale(0.96);
-    }
-
-    .btn-mood {
-      font-size: 1.1rem;
-    }
-
-    .btn-mood span.icon {
-      font-size: 2.5rem;
-      margin-bottom: 5px;
-    }
-
-    .btn-task {
-      background-color: #e3f2fd;
-      border-color: #90caf9;
-      color: #1565c0;
-    }
-
-    .btn-action {
-      background-color: var(--primary-color);
-      color: white;
-      border: none;
-      font-size: 1.3rem;
-      padding: 15px;
-      width: 100%;
-      margin-top: 15px;
-      border-radius: 10px;
-      cursor: pointer;
-    }
-
-    .btn-back {
-      background-color: #757575;
-      color: white;
-      border: none;
-      padding: 10px 20px;
-      font-size: 1rem;
-      border-radius: 8px;
-      margin-bottom: 15px;
-      cursor: pointer;
-    }
-
-    .btn-help {
-      background-color: #fff3e0;
-      border-color: #ffe0b2;
-      color: #e65100;
-      font-size: 1.2rem;
-    }
-
-    .btn-help span.icon {
-      font-size: 2rem;
-      margin-bottom: 5px;
-    }
-
-    .number-input {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 15px;
-      margin: 20px 0;
-    }
-
-    .btn-num {
-      width: 55px;
-      height: 55px;
-      font-size: 2rem;
       border-radius: 50%;
-      border: none;
-      background-color: var(--primary-color);
-      color: white;
-      cursor: pointer;
     }
-
-    .num-display {
-      font-size: 2.5rem;
+    .student-card p {
+      margin: 8px 0 0;
       font-weight: bold;
-      min-width: 100px;
-      text-align: center;
+      color: #444;
     }
 
-    .user-bar {
+    /* 選択肢エリア（初期状態は隠す） */
+    #action-options {
+      display: none;
+      margin-top: 30px;
+      padding: 20px;
+      background: #ffffff;
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      max-width: 500px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    #action-options h2 {
+      margin-top: 0;
+      color: #2c3e50;
+    }
+    .option-buttons {
       display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background-color: #f0f4f8;
-      padding: 10px 15px;
-      border-radius: 8px;
-      margin-bottom: 15px;
-      font-weight: bold;
-      font-size: 1.2rem;
+      justify-content: center;
+      gap: 15px;
+      flex-wrap: wrap;
     }
-
-    #toast {
-      position: fixed;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      background-color: rgba(0, 0, 0, 0.8);
+    .btn-option {
+      background-color: #4CAF50;
       color: white;
+      border: none;
       padding: 12px 24px;
-      border-radius: 25px;
-      font-size: 1.1rem;
-      z-index: 1000;
-      opacity: 0;
-      transition: opacity 0.3s ease;
-      pointer-events: none;
+      font-size: 18px;
+      font-weight: bold;
+      border-radius: 8px;
+      cursor: pointer;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
     }
-
-    #toast.show {
-      opacity: 1;
+    .btn-option:active {
+      background-color: #3e8e41;
+    }
+    .btn-close {
+      background-color: #888;
+      margin-top: 15px;
     }
   </style>
 </head>
 <body>
 
-  <header>
-    <h1>できた！ノート（紙工班）</h1>
-  </header>
+  <h1>だれですか？</h1>
 
-  <div id="toast">記録しました！</div>
+  <!-- 生徒一覧（画像と名前） -->
+  <div class="student-container">
+    <div class="student-card" onclick="selectStudent('藤本')">
+      <img src="images/藤本.jpeg" alt="藤本" onerror="this.src='https://via.placeholder.com/100?text=No+Image'">
+      <p>藤本</p>
+    </div>
+    <div class="student-card" onclick="selectStudent('宮﨑')">
+      <img src="images/宮﨑.jpeg" alt="宮﨑">
+      <p>宮﨑</p>
+    </div>
+    <div class="student-card" onclick="selectStudent('高宮')">
+      <img src="images/高宮.jpeg" alt="高宮" onerror="this.src='https://via.placeholder.com/100?text=No+Image'">
+      <p>高宮</p>
+    </div>
+    <div class="student-card" onclick="selectStudent('志水')">
+      <img src="images/志水.jpeg" alt="志水" onerror="this.src='https://via.placeholder.com/100?text=No+Image'">
+      <p>志水</p>
+    </div>
+    <div class="student-card" onclick="selectStudent('森田')">
+      <img src="images/森田.jpeg" alt="森田" onerror="this.src='https://via.placeholder.com/100?text=No+Image'">
+      <p>森田</p>
+    </div>
 
-  <!-- 1. 学年選択画面 -->
-  <div id="sec-grades" class="container">
-    <h2>がくねんを えらんでね</h2>
-    <div class="grade-grid">
-      <button class="btn btn-grade" onclick="selectGrade('1年')">1ねん</button>
-      <button class="btn btn-grade" onclick="selectGrade('2年')">2ねん</button>
-      <button class="btn btn-grade" onclick="selectGrade('3年')">3ねん</button>
+    <!-- 選択肢が出る生徒たち -->
+    <div class="student-card" onclick="selectStudent('下田')">
+      <img src="images/下田.jpeg" alt="下田">
+      <p>下田</p>
+    </div>
+    <div class="student-card" onclick="selectStudent('中野孝明')">
+      <img src="images/中野孝明.JPG" alt="中野孝明">
+      <p>中野孝明</p>
+    </div>
+    <div class="student-card" onclick="selectStudent('北岡')">
+      <img src="images/北岡.jpeg" alt="北岡">
+      <p>北岡</p>
+    </div>
+    <div class="student-card" onclick="selectStudent('堀田朋也')">
+      <img src="images/堀田朋也.JPG" alt="堀田朋也">
+      <p>堀田朋也</p>
+    </div>
+    <div class="student-card" onclick="selectStudent('奥村')">
+      <img src="images/奥村.jpeg" alt="奥村">
+      <p>奥村</p>
+    </div>
+    <div class="student-card" onclick="selectStudent('安元瞭太')">
+      <img src="images/安元瞭太(1).JPG" alt="安元瞭太">
+      <p>安元瞭太</p>
+    </div>
+    <div class="student-card" onclick="selectStudent('小松野')">
+      <img src="images/小松野.jpeg" alt="小松野">
+      <p>小松野</p>
+    </div>
+    <div class="student-card" onclick="selectStudent('岩下侑樹')">
+      <img src="images/岩下侑樹.JPG" alt="岩下侑樹">
+      <p>岩下侑樹</p>
+    </div>
+    <div class="student-card" onclick="selectStudent('岩見樹')">
+      <img src="images/岩見樹.JPG" alt="岩見樹">
+      <p>岩見樹</p>
+    </div>
+    <div class="student-card" onclick="selectStudent('帆保和将')">
+      <img src="images/帆保和将.JPG" alt="帆保和将">
+      <p>帆保和将</p>
     </div>
   </div>
 
-  <!-- 2. 生徒選択画面（顔写真付き） -->
-  <div id="sec-students" class="container hidden">
-    <button class="btn-back" onclick="showSection('sec-grades')">← がくねん選択へ</button>
-    <h2 id="grade-title">なまえを えらんでね</h2>
-    <div class="student-grid" id="student-list-container"></div>
-  </div>
-
-  <!-- 3. メインメニュー画面 -->
-  <div id="sec-menu" class="container hidden">
-    <div class="user-bar">
-      <span id="current-student-display"></span>
-      <button class="btn-back" onclick="showSection('sec-grades')">かえる</button>
+  <!-- 選択肢メニュー（「せんせい」以外の生徒を押したときに登場） -->
+  <div id="action-options">
+    <h2 id="target-student-name">なにをする？</h2>
+    <div class="option-buttons">
+      <button class="btn-option" onclick="speak('トイレ')">トイレ</button>
+      <button class="btn-option" onclick="speak('さんぽ')">さんぽ</button>
+      <button class="btn-option" onclick="speak('おちゃ')">おちゃ</button>
     </div>
-
-    <h2>きょうの こうどう</h2>
-    <div class="grid-2">
-      <button class="btn btn-task" onclick="showSection('sec-morning')">
-        <span style="font-size: 2rem;">☀️</span> あさの きぶん
-      </button>
-      <button class="btn btn-task" onclick="showSection('sec-work')" style="background-color: #e8f5e9; border-color: #a5d6a7; color: #2e7d32;">
-        <span style="font-size: 2rem;">✂️</span> さぎょうの きろく
-      </button>
-      <button class="btn btn-task" onclick="showSection('sec-evening')" style="background-color: #fff3e0; border-color: #ffe0b2; color: #e65100;">
-        <span style="font-size: 2rem;">🌆</span> かえりの ふりかえり
-      </button>
-    </div>
-
-    <h3 style="margin-top: 25px; margin-bottom: 10px;">きゅうけい・そうだん</h3>
-    <div class="grid-2">
-      <button class="btn btn-help" onclick="handleHelp('きゅうけい')">
-        <span class="icon">☕</span> きゅうけい する
-      </button>
-      <button class="btn btn-help" onclick="handleHelp('そうだん')">
-        <span class="icon">🙋‍♂️</span> そうだん する
-      </button>
-    </div>
-  </div>
-
-  <!-- 4. 朝の気分画面 -->
-  <div id="sec-morning" class="container hidden">
-    <button class="btn-back" onclick="showSection('sec-menu')">← もどる</button>
-    <h2>あさの きぶんは？</h2>
-    <div class="grid-3">
-      <button class="btn btn-mood" onclick="saveMorning('元気')"><span class="icon">😄</span>げんき</button>
-      <button class="btn btn-mood" onclick="saveMorning('ふつう')"><span class="icon">🙂</span>ふつう</button>
-      <button class="btn btn-mood" onclick="saveMorning('つかれた')"><span class="icon">😮‍💨</span>つかれた</button>
-    </div>
-  </div>
-
-  <!-- 5. 作業ログ画面 -->
-  <div id="sec-work" class="container hidden">
-    <button class="btn-back" onclick="showSection('sec-menu')">← もどる</button>
-    <h2>なにが できた？</h2>
-    <div class="grid-2">
-      <button class="btn btn-task" onclick="selectTask('ラミネートはがし', '枚', 10)">📄 ラミネートはがし</button>
-      <button class="btn btn-task" onclick="selectTask('裁断', 'かご', 1)">✂️ 裁断</button>
-      <button class="btn btn-task" onclick="selectTask('ミキサー', '回', 1)">🌀 ミキサー</button>
-      <button class="btn btn-task" onclick="selectTask('計量', '袋', 1)">⚖️ 計量</button>
-      <button class="btn btn-task" onclick="selectTask('袋詰め', '個', 12)">📦 袋詰め</button>
-      <button class="btn btn-task" onclick="selectTask('ミシン', '袋', 1)">🧵 ミシン</button>
-    </div>
-
-    <div id="count-area" class="hidden" style="margin-top: 20px; text-align: center;">
-      <h3 id="selected-task-display"></h3>
-      <div class="number-input">
-        <button class="btn-num" onclick="changeCount(-1)">-</button>
-        <span id="num-display" class="num-display">1枚</span>
-        <button class="btn-num" onclick="changeCount(1)">+</button>
-      </div>
-      <button class="btn btn-action" onclick="saveWork()">できた！を きろく</button>
-    </div>
-  </div>
-
-  <!-- 6. 帰りの振り返り画面 -->
-  <div id="sec-evening" class="container hidden">
-    <button class="btn-back" onclick="showSection('sec-menu')">← もどる</button>
-    <h2>きょうの ふりかえり</h2>
-    <div class="grid-3">
-      <button class="btn btn-mood" onclick="saveEvening('たのしかった')"><span class="icon">😆</span>たのしかった</button>
-      <button class="btn btn-mood" onclick="saveEvening('がんばった')"><span class="icon">😤</span>がんばった</button>
-      <button class="btn btn-mood" onclick="saveEvening('まあまあ')"><span class="icon">🙂</span>まあまあ</button>
+    <div>
+      <button class="btn-option btn-close" onclick="hideOptions()">とじる</button>
     </div>
   </div>
 
   <script>
-    const GAS_URL = "https://script.google.com/macros/s/AKfycbzz69-m6p7f2jX2mThmXmQpB101N45-s2Xm24o1d/exec";
+    // 生徒ごとのタイプ設定
+    const studentsData = {
+      // 「せんせい」と喋る5名
+      '藤本': 'teacher',
+      '宮﨑': 'teacher',
+      '高宮': 'teacher',
+      '志水': 'teacher',
+      '森田': 'teacher',
 
-    // デフォルト顔アイコン（画像なしの場合に使用）
-    const defaultAvatarSvg = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23757575'><path d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/></svg>";
+      // それ以外はすべて 'options'（選択肢表示）
+    };
 
-    // 正しい学年・作業内容・写真ファイル名で設定された24名の生徒マスターデータ
-    const studentDataList = [
-      // --- 1年生 (6名) ---
-      { name: "岩下", grade: "1年", photo: "images/岩下侑樹.jpg", defaultTask: "袋詰め", defaultValue: 12, unit: "個" },
-      { name: "藤本", grade: "1年", photo: "", defaultTask: "裁断", defaultValue: 1, unit: "かご" },
-      { name: "本田", grade: "1年", photo: "", defaultTask: "袋詰め", defaultValue: 12, unit: "個" },
-      { name: "堀田", grade: "1年", photo: "", defaultTask: "ミキサー", defaultValue: 1, unit: "回" },
-      { name: "後藤", grade: "1年", photo: "images/後藤琉伍.jpg", defaultTask: "ミシン", defaultValue: 1, unit: "袋" },
-      { name: "糸平", grade: "1年", photo: "images/糸平倖奈.jpg", defaultTask: "裁断", defaultValue: 1, unit: "かご" },
-
-      // --- 2年生 (11名) ---
-      { name: "北岡", grade: "2年", photo: "", defaultTask: "計量", defaultValue: 1, unit: "袋" },
-      { name: "下田", grade: "2年", photo: "images/下田.jpeg", defaultTask: "計量", defaultValue: 1, unit: "袋" },
-      { name: "宮﨑", grade: "2年", photo: "images/宮﨑.jpeg", defaultTask: "ラミネートはがし", defaultValue: 10, unit: "枚" },
-      { name: "奥村", grade: "2年", photo: "images/奥村.jpeg", defaultTask: "ラミネートはがし", defaultValue: 10, unit: "枚" },
-      { name: "小松野", grade: "2年", photo: "images/小松野.jpg", defaultTask: "ラミネートはがし", defaultValue: 10, unit: "枚" },
-      { name: "高宮", grade: "2年", photo: "", defaultTask: "ラミネートはがし", defaultValue: 10, unit: "枚" },
-      { name: "片山", grade: "2年", photo: "", defaultTask: "ラミネートはがし", defaultValue: 10, unit: "枚" },
-      { name: "志水", grade: "2年", photo: "images/志水走輔 (1).jpg", defaultTask: "ラミネートはがし", defaultValue: 10, unit: "枚" },
-      { name: "安元", grade: "2年", photo: "images/安元瞭太(1).jpg", defaultTask: "ミキサー", defaultValue: 1, unit: "回" },
-      { name: "松田", grade: "2年", photo: "", defaultTask: "袋詰め", defaultValue: 12, unit: "個" },
-      { name: "森田", grade: "2年", photo: "", defaultTask: "ラミネートはがし", defaultValue: 10, unit: "枚" },
-
-      // --- 3年生 (7名) ---
-      { name: "田中", grade: "3年", photo: "", defaultTask: "ラミネートはがし", defaultValue: 10, unit: "枚" },
-      { name: "榎田", grade: "3年", photo: "", defaultTask: "ラミネートはがし", defaultValue: 10, unit: "枚" },
-      { name: "帆保", grade: "3年", photo: "", defaultTask: "裁断", defaultValue: 1, unit: "かご" },
-      { name: "杠",   grade: "3年", photo: "", defaultTask: "裁断", defaultValue: 1, unit: "かご" },
-      { name: "田崎", grade: "3年", photo: "", defaultTask: "ミキサー", defaultValue: 1, unit: "回" },
-      { name: "中野", grade: "3年", photo: "", defaultTask: "ミシン", defaultValue: 1, unit: "袋" },
-      { name: "岩見", grade: "3年", photo: "images/岩見樹.jpg", defaultTask: "ラミネートはがし", defaultValue: 10, unit: "枚" }
-    ];
-
-    let currentStudentObj = null;
-    let selectedTaskName = "";
-    let currentUnit = "";
-    let currentCount = 1;
-
-    function showSection(sectionId) {
-      const sections = ['sec-grades', 'sec-students', 'sec-menu', 'sec-morning', 'sec-work', 'sec-evening'];
-      sections.forEach(id => document.getElementById(id).classList.add('hidden'));
-      document.getElementById(sectionId).classList.remove('hidden');
+    // 音声読み上げ処理
+    function speak(text) {
+      const uttr = new SpeechSynthesisUtterance(text);
+      uttr.lang = 'ja-JP';
+      speechSynthesis.speak(uttr);
     }
 
-    // 学年選択 ➔ 生徒一覧生成
-    function selectGrade(gradeName) {
-      document.getElementById('grade-title').textContent = `${gradeName} の なまえを えらんでね`;
-      const container = document.getElementById('student-list-container');
-      container.innerHTML = '';
+    // カードを押したときの処理
+    function selectStudent(name) {
+      const type = studentsData[name] || 'options';
 
-      const filtered = studentDataList.filter(s => s.grade === gradeName);
-      filtered.forEach(student => {
-        const card = document.createElement('button');
-        card.className = 'btn-student-card';
-        card.onclick = () => selectStudent(student);
-
-        const imgWrapper = document.createElement('div');
-        imgWrapper.className = 'student-photo-wrapper';
-
-        const img = document.createElement('img');
-        img.className = 'student-photo';
-        img.src = student.photo ? student.photo : defaultAvatarSvg;
-        img.alt = student.name;
-
-        imgWrapper.appendChild(img);
-
-        const nameSpan = document.createElement('span');
-        nameSpan.className = 'student-name';
-        nameSpan.textContent = student.name;
-
-        card.appendChild(imgWrapper);
-        card.appendChild(nameSpan);
-        container.appendChild(card);
-      });
-
-      showSection('sec-students');
-    }
-
-    function speakText(text) {
-      if ('speechSynthesis' in window) {
-        window.speechSynthesis.cancel();
-        const uttr = new SpeechSynthesisUtterance(text);
-        uttr.lang = 'ja-JP';
-        uttr.rate = 1.0;
-        uttr.pitch = 1.2;
-        window.speechSynthesis.speak(uttr);
-      }
-    }
-
-    function selectStudent(studentObj) {
-      currentStudentObj = studentObj;
-      document.getElementById('current-student-display').textContent = `👤 ${studentObj.grade} ${studentObj.name}`;
-      showSection('sec-menu');
-    }
-
-    function handleHelp(type) {
-      speakText('せんせい');
-      showToast(`${type} を つたえました`);
-      sendData({ type: 'help', student: currentStudentObj ? currentStudentObj.name : '', detail: type });
-    }
-
-    function saveMorning(mood) {
-      showToast(`あさのきぶん：「${mood}」をきろくしました`);
-      sendData({ type: 'morning', student: currentStudentObj.name, mood: mood });
-      showSection('sec-menu');
-    }
-
-    function selectTask(taskName, unit, defaultVal) {
-      selectedTaskName = taskName;
-      currentUnit = unit;
-      if (currentStudentObj && currentStudentObj.defaultTask === taskName) {
-        currentCount = currentStudentObj.defaultValue;
+      if (type === 'teacher') {
+        // 「せんせい」と読み上げ、選択肢は非表示に
+        speak('せんせい');
+        hideOptions();
       } else {
-        currentCount = defaultVal || 1;
+        // 名前を読み上げ、選択肢エリアを表示
+        speak(name);
+        showOptions(name);
       }
-      document.getElementById('selected-task-display').textContent = taskName + " の かず";
-      updateCountDisplay();
-      document.getElementById('count-area').classList.remove('hidden');
     }
 
-    function changeCount(delta) {
-      currentCount = Math.max(1, currentCount + delta);
-      updateCountDisplay();
+    // 選択肢を表示する処理
+    function showOptions(name) {
+      const optionsDiv = document.getElementById('action-options');
+      const title = document.getElementById('target-student-name');
+      if (optionsDiv && title) {
+        title.innerText = name + 'さん、なにをする？';
+        optionsDiv.style.display = 'block';
+      }
     }
 
-    function updateCountDisplay() {
-      document.getElementById('num-display').textContent = currentCount + " " + currentUnit;
-    }
-
-    function saveWork() {
-      showToast(`${selectedTaskName} ${currentCount}${currentUnit} できた！`);
-      sendData({
-        type: 'work',
-        student: currentStudentObj.name,
-        task: selectedTaskName,
-        count: currentCount,
-        unit: currentUnit
-      });
-      document.getElementById('count-area').classList.add('hidden');
-      showSection('sec-menu');
-    }
-
-    function saveEvening(mood) {
-      showToast(`ふりかえり：「${mood}」をきろくしました`);
-      sendData({ type: 'evening', student: currentStudentObj.name, mood: mood });
-      showSection('sec-menu');
-    }
-
-    function sendData(data) {
-      if (!GAS_URL || GAS_URL.includes("ここに")) return;
-      fetch(GAS_URL, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
-      });
-    }
-
-    function showToast(message) {
-      const toast = document.getElementById('toast');
-      toast.textContent = message;
-      toast.classList.add('show');
-      setTimeout(() => toast.classList.remove('show'), 2500);
+    // 選択肢を隠す処理
+    function hideOptions() {
+      const optionsDiv = document.getElementById('action-options');
+      if (optionsDiv) {
+        optionsDiv.style.display = 'none';
+      }
     }
   </script>
 </body>
