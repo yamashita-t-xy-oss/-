@@ -58,12 +58,71 @@
       display: none !important;
     }
 
-    /* 生徒リスト用のレスポンシブグリッド */
+    /* 学年選択ボタン */
+    .grade-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+      margin-top: 15px;
+    }
+
+    .btn-grade {
+      background-color: #e8eaf6;
+      border-color: #c5cae9;
+      color: #1a237e;
+      font-size: 1.5rem;
+      padding: 25px 10px;
+    }
+
+    /* 顔写真付き生徒カードのグリッド */
     .student-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-      gap: 12px;
+      gap: 15px;
       margin-top: 15px;
+    }
+
+    .btn-student-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 8px;
+      background-color: #e8f5e9;
+      border: 2px solid #a5d6a7;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: transform 0.2s, background-color 0.2s;
+    }
+
+    .btn-student-card:active {
+      transform: scale(0.95);
+      background-color: #c8e6c9;
+    }
+
+    .student-photo-wrapper {
+      width: 75px;
+      height: 75px;
+      border-radius: 50%;
+      overflow: hidden;
+      background-color: #ffffff;
+      border: 3px solid #4CAF50;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .student-photo {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .student-name {
+      font-size: 1.1rem;
+      font-weight: bold;
+      color: #2e7d32;
     }
 
     .grid-3 {
@@ -98,14 +157,6 @@
 
     .btn:active {
       transform: scale(0.96);
-    }
-
-    .btn-student {
-      background-color: #e8f5e9;
-      border-color: #a5d6a7;
-      color: #2e7d32;
-      font-size: 1.2rem;
-      padding: 18px 5px;
     }
 
     .btn-mood {
@@ -225,72 +276,69 @@
 
   <div id="toast">記録しました！</div>
 
-  <!-- 1. 生徒選択画面 -->
-  <div id="sec-students" class="container">
-    <h2>なまえを えらんでね</h2>
-    <div class="student-grid" id="student-list-container">
-      <!-- JavaScriptで自動生成されます -->
+  <!-- 1. 学年選択画面 -->
+  <div id="sec-grades" class="container">
+    <h2>がくねんを えらんでね</h2>
+    <div class="grade-grid">
+      <button class="btn btn-grade" onclick="selectGrade('1年')">1ねん</button>
+      <button class="btn btn-grade" onclick="selectGrade('2年')">2ねん</button>
+      <button class="btn btn-grade" onclick="selectGrade('3年')">3ねん</button>
     </div>
   </div>
 
-  <!-- 2. メインメニュー画面 -->
+  <!-- 2. 生徒選択画面（顔写真付き） -->
+  <div id="sec-students" class="container hidden">
+    <button class="btn-back" onclick="showSection('sec-grades')">← がくねん選択へ</button>
+    <h2 id="grade-title">なまえを えらんでね</h2>
+    <div class="student-grid" id="student-list-container"></div>
+  </div>
+
+  <!-- 3. メインメニュー画面 -->
   <div id="sec-menu" class="container hidden">
     <div class="user-bar">
       <span id="current-student-display"></span>
-      <button class="btn-back" onclick="showSection('sec-students')">かえる</button>
+      <button class="btn-back" onclick="showSection('sec-grades')">かえる</button>
     </div>
 
     <h2>きょうの こうどう</h2>
     <div class="grid-2">
       <button class="btn btn-task" onclick="showSection('sec-morning')">
-        <span style="font-size: 2rem;">☀️</span>
-        あさの きぶん
+        <span style="font-size: 2rem;">☀️</span> あさの きぶん
       </button>
       <button class="btn btn-task" onclick="showSection('sec-work')" style="background-color: #e8f5e9; border-color: #a5d6a7; color: #2e7d32;">
-        <span style="font-size: 2rem;">✂️</span>
-        さぎょうの きろく
+        <span style="font-size: 2rem;">✂️</span> さぎょうの きろく
       </button>
       <button class="btn btn-task" onclick="showSection('sec-evening')" style="background-color: #fff3e0; border-color: #ffe0b2; color: #e65100;">
-        <span style="font-size: 2rem;">🌆</span>
-        かえりの ふりかえり
+        <span style="font-size: 2rem;">🌆</span> かえりの ふりかえり
       </button>
     </div>
 
     <h3 style="margin-top: 25px; margin-bottom: 10px;">きゅうけい・そうだん</h3>
     <div class="grid-2">
       <button class="btn btn-help" onclick="handleHelp('きゅうけい')">
-        <span class="icon">☕</span>
-        きゅうけい する
+        <span class="icon">☕</span> きゅうけい する
       </button>
       <button class="btn btn-help" onclick="handleHelp('そうだん')">
-        <span class="icon">🙋‍♂️</span>
-        そうだん する
+        <span class="icon">🙋‍♂️</span> そうだん する
       </button>
     </div>
   </div>
 
-  <!-- 3. 朝の気分画面 -->
+  <!-- 4. 朝の気分画面 -->
   <div id="sec-morning" class="container hidden">
     <button class="btn-back" onclick="showSection('sec-menu')">← もどる</button>
     <h2>あさの きぶんは？</h2>
     <div class="grid-3">
-      <button class="btn btn-mood" onclick="saveMorning('元気')">
-        <span class="icon">😄</span>げんき
-      </button>
-      <button class="btn btn-mood" onclick="saveMorning('ふつう')">
-        <span class="icon">🙂</span>ふつう
-      </button>
-      <button class="btn btn-mood" onclick="saveMorning('つかれた')">
-        <span class="icon">😮‍💨</span>つかれた
-      </button>
+      <button class="btn btn-mood" onclick="saveMorning('元気')"><span class="icon">😄</span>げんき</button>
+      <button class="btn btn-mood" onclick="saveMorning('ふつう')"><span class="icon">🙂</span>ふつう</button>
+      <button class="btn btn-mood" onclick="saveMorning('つかれた')"><span class="icon">😮‍💨</span>つかれた</button>
     </div>
   </div>
 
-  <!-- 4. 作業ログ画面 -->
+  <!-- 5. 作業ログ画面 -->
   <div id="sec-work" class="container hidden">
     <button class="btn-back" onclick="showSection('sec-menu')">← もどる</button>
     <h2>なにが できた？</h2>
-    
     <div class="grid-2">
       <button class="btn btn-task" onclick="selectTask('ラミネートはがし', '枚', 10)">📄 ラミネートはがし</button>
       <button class="btn btn-task" onclick="selectTask('裁断', 'かご', 1)">✂️ 裁断</button>
@@ -311,53 +359,54 @@
     </div>
   </div>
 
-  <!-- 5. 帰りの振り返り画面 -->
+  <!-- 6. 帰りの振り返り画面 -->
   <div id="sec-evening" class="container hidden">
     <button class="btn-back" onclick="showSection('sec-menu')">← もどる</button>
     <h2>きょうの ふりかえり</h2>
     <div class="grid-3">
-      <button class="btn btn-mood" onclick="saveEvening('たのしかった')">
-        <span class="icon">😆</span>たのしかった
-      </button>
-      <button class="btn btn-mood" onclick="saveEvening('がんばった')">
-        <span class="icon">😤</span>がんばった
-      </button>
-      <button class="btn btn-mood" onclick="saveEvening('まあまあ')">
-        <span class="icon">🙂</span>まあまあ
-      </button>
+      <button class="btn btn-mood" onclick="saveEvening('たのしかった')"><span class="icon">😆</span>たのしかった</button>
+      <button class="btn btn-mood" onclick="saveEvening('がんばった')"><span class="icon">😤</span>がんばった</button>
+      <button class="btn btn-mood" onclick="saveEvening('まあまあ')"><span class="icon">🙂</span>まあまあ</button>
     </div>
   </div>
 
   <script>
-    // ⚠️ ご自身のGAS（Google Apps Script）のウェブアプリURLをここに設定してください
     const GAS_URL = "https://script.google.com/macros/s/AKfycbzz69-m6p7f2jX2mThmXmQpB101N45-s2Xm24o1d/exec";
 
-    // 24名の生徒マスターデータ（初期設定の作業と初期値）
+    // デフォルト顔アイコン（画像なしの場合に使用）
+    const defaultAvatarSvg = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23757575'><path d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/></svg>";
+
+    // 正しい学年・作業内容・写真ファイル名で設定された24名の生徒マスターデータ
     const studentDataList = [
-      { name: "宮﨑", defaultTask: "ラミネートはがし", defaultValue: 10, unit: "枚" },
-      { name: "田中", defaultTask: "ラミネートはがし", defaultValue: 10, unit: "枚" },
-      { name: "奥村", defaultTask: "ラミネートはがし", defaultValue: 10, unit: "枚" },
-      { name: "森田", defaultTask: "ラミネートはがし", defaultValue: 10, unit: "枚" },
-      { name: "小松野", defaultTask: "ラミネートはがし", defaultValue: 10, unit: "枚" },
-      { name: "高宮", defaultTask: "ラミネートはがし", defaultValue: 10, unit: "枚" },
-      { name: "志水", defaultTask: "ラミネートはがし", defaultValue: 10, unit: "枚" },
-      { name: "片山", defaultTask: "ラミネートはがし", defaultValue: 10, unit: "枚" },
-      { name: "岩見", defaultTask: "ラミネートはがし", defaultValue: 10, unit: "枚" },
-      { name: "榎田", defaultTask: "ラミネートはがし", defaultValue: 10, unit: "枚" },
-      { name: "帆保", defaultTask: "裁断", defaultValue: 1, unit: "かご" },
-      { name: "藤本", defaultTask: "裁断", defaultValue: 1, unit: "かご" },
-      { name: "糸平", defaultTask: "裁断", defaultValue: 1, unit: "かご" },
-      { name: "杠", defaultTask: "裁断", defaultValue: 1, unit: "かご" },
-      { name: "安元", defaultTask: "ミキサー", defaultValue: 1, unit: "回" },
-      { name: "堀田", defaultTask: "ミキサー", defaultValue: 1, unit: "回" },
-      { name: "田崎", defaultTask: "ミキサー", defaultValue: 1, unit: "回" },
-      { name: "下田", defaultTask: "計量", defaultValue: 1, unit: "袋" },
-      { name: "北岡", defaultTask: "計量", defaultValue: 1, unit: "袋" },
-      { name: "本田", defaultTask: "袋詰め", defaultValue: 12, unit: "個" },
-      { name: "岩下", defaultTask: "袋詰め", defaultValue: 12, unit: "個" },
-      { name: "松田", defaultTask: "袋詰め", defaultValue: 12, unit: "個" },
-      { name: "中野", defaultTask: "ミシン", defaultValue: 1, unit: "袋" },
-      { name: "後藤", defaultTask: "ミシン", defaultValue: 1, unit: "袋" }
+      // --- 1年生 (6名) ---
+      { name: "岩下", grade: "1年", photo: "images/岩下侑樹.jpg", defaultTask: "袋詰め", defaultValue: 12, unit: "個" },
+      { name: "藤本", grade: "1年", photo: "", defaultTask: "裁断", defaultValue: 1, unit: "かご" },
+      { name: "本田", grade: "1年", photo: "", defaultTask: "袋詰め", defaultValue: 12, unit: "個" },
+      { name: "堀田", grade: "1年", photo: "", defaultTask: "ミキサー", defaultValue: 1, unit: "回" },
+      { name: "後藤", grade: "1年", photo: "images/後藤琉伍.jpg", defaultTask: "ミシン", defaultValue: 1, unit: "袋" },
+      { name: "糸平", grade: "1年", photo: "images/糸平倖奈.jpg", defaultTask: "裁断", defaultValue: 1, unit: "かご" },
+
+      // --- 2年生 (11名) ---
+      { name: "北岡", grade: "2年", photo: "", defaultTask: "計量", defaultValue: 1, unit: "袋" },
+      { name: "下田", grade: "2年", photo: "images/下田.jpg", defaultTask: "計量", defaultValue: 1, unit: "袋" },
+      { name: "宮﨑", grade: "2年", photo: "images/宮﨑.jpg", defaultTask: "ラミネートはがし", defaultValue: 10, unit: "枚" },
+      { name: "奥村", grade: "2年", photo: "images/奥村.jpg", defaultTask: "ラミネートはがし", defaultValue: 10, unit: "枚" },
+      { name: "小松野", grade: "2年", photo: "images/小松野.jpg", defaultTask: "ラミネートはがし", defaultValue: 10, unit: "枚" },
+      { name: "高宮", grade: "2年", photo: "", defaultTask: "ラミネートはがし", defaultValue: 10, unit: "枚" },
+      { name: "片山", grade: "2年", photo: "", defaultTask: "ラミネートはがし", defaultValue: 10, unit: "枚" },
+      { name: "志水", grade: "2年", photo: "images/志水走輔 (1).jpg", defaultTask: "ラミネートはがし", defaultValue: 10, unit: "枚" },
+      { name: "安元", grade: "2年", photo: "images/安元瞭太(1).jpg", defaultTask: "ミキサー", defaultValue: 1, unit: "回" },
+      { name: "松田", grade: "2年", photo: "", defaultTask: "袋詰め", defaultValue: 12, unit: "個" },
+      { name: "森田", grade: "2年", photo: "", defaultTask: "ラミネートはがし", defaultValue: 10, unit: "枚" },
+
+      // --- 3年生 (7名) ---
+      { name: "田中", grade: "3年", photo: "", defaultTask: "ラミネートはがし", defaultValue: 10, unit: "枚" },
+      { name: "榎田", grade: "3年", photo: "", defaultTask: "ラミネートはがし", defaultValue: 10, unit: "枚" },
+      { name: "帆保", grade: "3年", photo: "", defaultTask: "裁断", defaultValue: 1, unit: "かご" },
+      { name: "杠",   grade: "3年", photo: "", defaultTask: "裁断", defaultValue: 1, unit: "かご" },
+      { name: "田崎", grade: "3年", photo: "", defaultTask: "ミキサー", defaultValue: 1, unit: "回" },
+      { name: "中野", grade: "3年", photo: "", defaultTask: "ミシン", defaultValue: 1, unit: "袋" },
+      { name: "岩見", grade: "3年", photo: "images/岩見樹.jpg", defaultTask: "ラミネートはがし", defaultValue: 10, unit: "枚" }
     ];
 
     let currentStudentObj = null;
@@ -365,20 +414,46 @@
     let currentUnit = "";
     let currentCount = 1;
 
-    // 画面読み込み時に生徒ボタンを動的生成
-    window.onload = function() {
+    function showSection(sectionId) {
+      const sections = ['sec-grades', 'sec-students', 'sec-menu', 'sec-morning', 'sec-work', 'sec-evening'];
+      sections.forEach(id => document.getElementById(id).classList.add('hidden'));
+      document.getElementById(sectionId).classList.remove('hidden');
+    }
+
+    // 学年選択 ➔ 生徒一覧生成
+    function selectGrade(gradeName) {
+      document.getElementById('grade-title').textContent = `${gradeName} の なまえを えらんでね`;
       const container = document.getElementById('student-list-container');
       container.innerHTML = '';
-      studentDataList.forEach(student => {
-        const btn = document.createElement('button');
-        btn.className = 'btn btn-student';
-        btn.textContent = student.name;
-        btn.onclick = () => selectStudent(student);
-        container.appendChild(btn);
-      });
-    };
 
-    // 音声読み上げ
+      const filtered = studentDataList.filter(s => s.grade === gradeName);
+      filtered.forEach(student => {
+        const card = document.createElement('button');
+        card.className = 'btn-student-card';
+        card.onclick = () => selectStudent(student);
+
+        const imgWrapper = document.createElement('div');
+        imgWrapper.className = 'student-photo-wrapper';
+
+        const img = document.createElement('img');
+        img.className = 'student-photo';
+        img.src = student.photo ? student.photo : defaultAvatarSvg;
+        img.alt = student.name;
+
+        imgWrapper.appendChild(img);
+
+        const nameSpan = document.createElement('span');
+        nameSpan.className = 'student-name';
+        nameSpan.textContent = student.name;
+
+        card.appendChild(imgWrapper);
+        card.appendChild(nameSpan);
+        container.appendChild(card);
+      });
+
+      showSection('sec-students');
+    }
+
     function speakText(text) {
       if ('speechSynthesis' in window) {
         window.speechSynthesis.cancel();
@@ -390,73 +465,46 @@
       }
     }
 
-    // 画面切り替え
-    function showSection(sectionId) {
-      const sections = ['sec-students', 'sec-menu', 'sec-morning', 'sec-work', 'sec-evening'];
-      sections.forEach(id => {
-        document.getElementById(id).classList.add('hidden');
-      });
-      document.getElementById(sectionId).classList.remove('hidden');
-    }
-
-    // 生徒選択
     function selectStudent(studentObj) {
       currentStudentObj = studentObj;
-      document.getElementById('current-student-display').textContent = "👤 " + studentObj.name;
+      document.getElementById('current-student-display').textContent = `👤 ${studentObj.grade} ${studentObj.name}`;
       showSection('sec-menu');
     }
 
-    // 休憩・相談ボタン（音声「せんせい」）
     function handleHelp(type) {
       speakText('せんせい');
       showToast(`${type} を つたえました`);
-      sendData({
-        type: 'help',
-        student: currentStudentObj ? currentStudentObj.name : '',
-        detail: type
-      });
+      sendData({ type: 'help', student: currentStudentObj ? currentStudentObj.name : '', detail: type });
     }
 
-    // 朝の気分保存
     function saveMorning(mood) {
       showToast(`あさのきぶん：「${mood}」をきろくしました`);
-      sendData({
-        type: 'morning',
-        student: currentStudentObj.name,
-        mood: mood
-      });
+      sendData({ type: 'morning', student: currentStudentObj.name, mood: mood });
       showSection('sec-menu');
     }
 
-    // 作業選択
     function selectTask(taskName, unit, defaultVal) {
       selectedTaskName = taskName;
       currentUnit = unit;
-      
-      // 選択した生徒の主な作業と同じであれば、初期値をセット
       if (currentStudentObj && currentStudentObj.defaultTask === taskName) {
         currentCount = currentStudentObj.defaultValue;
       } else {
         currentCount = defaultVal || 1;
       }
-
       document.getElementById('selected-task-display').textContent = taskName + " の かず";
       updateCountDisplay();
       document.getElementById('count-area').classList.remove('hidden');
     }
 
-    // 数量変更
     function changeCount(delta) {
       currentCount = Math.max(1, currentCount + delta);
       updateCountDisplay();
     }
 
-    // 数量表示の更新
     function updateCountDisplay() {
       document.getElementById('num-display').textContent = currentCount + " " + currentUnit;
     }
 
-    // 作業ログ保存
     function saveWork() {
       showToast(`${selectedTaskName} ${currentCount}${currentUnit} できた！`);
       sendData({
@@ -470,44 +518,27 @@
       showSection('sec-menu');
     }
 
-    // 帰りの振り返り保存
     function saveEvening(mood) {
       showToast(`ふりかえり：「${mood}」をきろくしました`);
-      sendData({
-        type: 'evening',
-        student: currentStudentObj.name,
-        mood: mood
-      });
+      sendData({ type: 'evening', student: currentStudentObj.name, mood: mood });
       showSection('sec-menu');
     }
 
-    // GASデータ送信関数
     function sendData(data) {
-      if (!GAS_URL || GAS_URL.includes("ここに")) {
-        console.log("GAS URL未設定: ", data);
-        return;
-      }
-
+      if (!GAS_URL || GAS_URL.includes("ここに")) return;
       fetch(GAS_URL, {
         method: 'POST',
         mode: 'no-cors',
-        headers: {
-          'Content-Type': 'application/json'
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
-      })
-      .then(() => console.log("送信成功"))
-      .catch(err => console.error("送信エラー:", err));
+      });
     }
 
-    // トースト表示
     function showToast(message) {
       const toast = document.getElementById('toast');
       toast.textContent = message;
       toast.classList.add('show');
-      setTimeout(() => {
-        toast.classList.remove('show');
-      }, 2500);
+      setTimeout(() => toast.classList.remove('show'), 2500);
     }
   </script>
 </body>
