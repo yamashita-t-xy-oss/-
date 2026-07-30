@@ -47,13 +47,14 @@
       margin: 8px 0 0;
       font-weight: bold;
       color: #444;
+      font-size: 18px;
     }
 
     /* パネル共通デザイン */
     .modal-panel {
       display: none;
-      margin-top: 25px;
-      padding: 20px;
+      margin-top: 40px;
+      padding: 30px 20px;
       background: #ffffff;
       border-radius: 16px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.15);
@@ -64,19 +65,21 @@
     .modal-panel h2 {
       margin-top: 0;
       color: #2c3e50;
+      font-size: 24px;
     }
     .button-group {
       display: flex;
       justify-content: center;
-      gap: 12px;
+      gap: 15px;
       flex-wrap: wrap;
+      margin-top: 20px;
     }
     .btn-main {
       background-color: #2196F3; /* 青色 */
       color: white;
       border: none;
-      padding: 14px 20px;
-      font-size: 18px;
+      padding: 16px 24px;
+      font-size: 20px;
       font-weight: bold;
       border-radius: 10px;
       cursor: pointer;
@@ -86,8 +89,8 @@
       background-color: #4CAF50; /* 緑色 */
       color: white;
       border: none;
-      padding: 12px 20px;
-      font-size: 18px;
+      padding: 14px 22px;
+      font-size: 20px;
       font-weight: bold;
       border-radius: 8px;
       cursor: pointer;
@@ -95,77 +98,81 @@
     }
     .btn-close {
       background-color: #888;
-      margin-top: 15px;
+      margin-top: 25px;
     }
   </style>
 </head>
 <body>
 
-  <h1>なまえをおしてね！</h1>
+  <!-- トップ画面エリア（名前選択） -->
+  <div id="top-screen">
+    <h1>なまえをおしてね！</h1>
 
-  <!-- 生徒一覧 -->
-  <div class="student-container">
-    <div class="student-card" onclick="selectStudent('藤本')">
-      <img src="images/藤本.jpeg" alt="藤本" onerror="this.src='https://via.placeholder.com/100?text=No+Image'">
-      <p>藤本</p>
-    </div>
-    <div class="student-card" onclick="selectStudent('宮﨑')">
-      <img src="images/宮﨑.jpeg" alt="宮﨑">
-      <p>宮﨑</p>
-    </div>
-    <div class="student-card" onclick="selectStudent('高宮')">
-      <img src="images/高宮.jpeg" alt="高宮" onerror="this.src='https://via.placeholder.com/100?text=No+Image'">
-      <p>高宮</p>
-    </div>
-    <div class="student-card" onclick="selectStudent('志水')">
-      <img src="images/志水.jpeg" alt="志水" onerror="this.src='https://via.placeholder.com/100?text=No+Image'">
-      <p>志水</p>
-    </div>
-    <div class="student-card" onclick="selectStudent('森田')">
-      <img src="images/森田.jpeg" alt="森田" onerror="this.src='https://via.placeholder.com/100?text=No+Image'">
-      <p>森田</p>
-    </div>
+    <!-- 生徒一覧（全員ひらがな・名字のみ） -->
+    <div class="student-container">
+      <!-- 「せんせい」と読み上げる生徒（5名） -->
+      <div class="student-card" onclick="selectStudent('ふじもと')">
+        <img src="images/藤本.jpeg" alt="ふじもと" onerror="this.src='https://via.placeholder.com/100?text=No+Image'">
+        <p>ふじもと</p>
+      </div>
+      <div class="student-card" onclick="selectStudent('みやざき')">
+        <img src="images/宮﨑.jpeg" alt="みやざき">
+        <p>みやざき</p>
+      </div>
+      <div class="student-card" onclick="selectStudent('たかみや')">
+        <img src="images/高宮.jpeg" alt="たかみや" onerror="this.src='https://via.placeholder.com/100?text=No+Image'">
+        <p>たかみや</p>
+      </div>
+      <div class="student-card" onclick="selectStudent('しみず')">
+        <img src="images/志水.jpeg" alt="しみず" onerror="this.src='https://via.placeholder.com/100?text=No+Image'">
+        <p>しみず</p>
+      </div>
+      <div class="student-card" onclick="selectStudent('もりた')">
+        <img src="images/森田.jpeg" alt="もりた" onerror="this.src='https://via.placeholder.com/100?text=No+Image'">
+        <p>もりた</p>
+      </div>
 
-    <!-- 選択肢が出る生徒たち -->
-    <div class="student-card" onclick="selectStudent('下田')">
-      <img src="images/下田.jpeg" alt="下田">
-      <p>下田</p>
-    </div>
-    <div class="student-card" onclick="selectStudent('中野孝明')">
-      <img src="images/中野孝明.JPG" alt="中野孝明">
-      <p>中野孝明</p>
-    </div>
-    <div class="student-card" onclick="selectStudent('北岡')">
-      <img src="images/北岡.jpeg" alt="北岡">
-      <p>北岡</p>
-    </div>
-    <div class="student-card" onclick="selectStudent('堀田朋也')">
-      <img src="images/堀田朋也.JPG" alt="堀田朋也">
-      <p>堀田朋也</p>
-    </div>
-    <div class="student-card" onclick="selectStudent('奥村')">
-      <img src="images/奥村.jpeg" alt="奥村">
-      <p>奥村</p>
-    </div>
-    <div class="student-card" onclick="selectStudent('安元瞭太')">
-      <img src="images/安元瞭太(1).JPG" alt="安元瞭太">
-      <p>安元瞭太</p>
-    </div>
-    <div class="student-card" onclick="selectStudent('小松野')">
-      <img src="images/小松野.jpeg" alt="小松野">
-      <p>小松野</p>
-    </div>
-    <div class="student-card" onclick="selectStudent('岩下侑樹')">
-      <img src="images/岩下侑樹.JPG" alt="岩下侑樹">
-      <p>岩下侑樹</p>
-    </div>
-    <div class="student-card" onclick="selectStudent('岩見樹')">
-      <img src="images/岩見樹.JPG" alt="岩見樹">
-      <p>岩見樹</p>
-    </div>
-    <div class="student-card" onclick="selectStudent('帆保和将')">
-      <img src="images/帆保和将.JPG" alt="帆保和将">
-      <p>帆保和将</p>
+      <!-- 選択肢が出る生徒たち -->
+      <div class="student-card" onclick="selectStudent('しもだ')">
+        <img src="images/下田.jpeg" alt="しもだ">
+        <p>しもだ</p>
+      </div>
+      <div class="student-card" onclick="selectStudent('なかの')">
+        <img src="images/中野孝明.JPG" alt="なかの">
+        <p>なかの</p>
+      </div>
+      <div class="student-card" onclick="selectStudent('きたおか')">
+        <img src="images/北岡.jpeg" alt="きたおか">
+        <p>きたおか</p>
+      </div>
+      <div class="student-card" onclick="selectStudent('ほりた')">
+        <img src="images/堀田朋也.JPG" alt="ほりた">
+        <p>ほりた</p>
+      </div>
+      <div class="student-card" onclick="selectStudent('おくむら')">
+        <img src="images/奥村.jpeg" alt="おくむら">
+        <p>おくむら</p>
+      </div>
+      <div class="student-card" onclick="selectStudent('やすもと')">
+        <img src="images/安元瞭太(1).JPG" alt="やすもと">
+        <p>やすもと</p>
+      </div>
+      <div class="student-card" onclick="selectStudent('こまつの')">
+        <img src="images/小松野.jpeg" alt="こまつの">
+        <p>こまつの</p>
+      </div>
+      <div class="student-card" onclick="selectStudent('いわた')">
+        <img src="images/岩下侑樹.JPG" alt="いわた">
+        <p>いわた</p>
+      </div>
+      <div class="student-card" onclick="selectStudent('いわみ')">
+        <img src="images/岩見樹.JPG" alt="いわみ">
+        <p>いわみ</p>
+      </div>
+      <div class="student-card" onclick="selectStudent('ほほ')">
+        <img src="images/帆保和将.JPG" alt="ほほ">
+        <p>ほほ</p>
+      </div>
     </div>
   </div>
 
@@ -179,7 +186,7 @@
       <button class="btn-main" onclick="onCategorySelect('おつかれさま')">おつかれさま</button>
     </div>
     <div>
-      <button class="btn-main btn-close" onclick="closeAllPanels()">とじる</button>
+      <button class="btn-main btn-close" onclick="closeAllPanels()">もどる</button>
     </div>
   </div>
 
@@ -193,7 +200,6 @@
   </div>
 
   <script>
-    // 現在選択されている生徒の名前
     let currentStudent = '';
 
     // ① 学年ごとの「きゅうけい」選択肢リスト
@@ -204,29 +210,29 @@
       '4年': ['トイレ', 'おちゃ', 'じゆうじかん', 'きゅうけい']
     };
 
-    // ② 生徒ごとの設定（タイプと学年）
+    // ② 生徒ごとの設定（ひらがな表記に統一）
     const studentsData = {
       // 「せんせい」読み上げタイプ
-      '藤本': { type: 'teacher' },
-      '宮﨑': { type: 'teacher' },
-      '高宮': { type: 'teacher' },
-      '志水': { type: 'teacher' },
-      '森田': { type: 'teacher' },
+      'ふじもと': { type: 'teacher' },
+      'みやざき': { type: 'teacher' },
+      'たかみや': { type: 'teacher' },
+      'しみず': { type: 'teacher' },
+      'もりた': { type: 'teacher' },
 
       // 選択肢タイプ
-      '下田': { type: 'options', grade: '1年' },
-      '中野孝明': { type: 'options', grade: '1年' },
-      '北岡': { type: 'options', grade: '2年' },
-      '堀田朋也': { type: 'options', grade: '2年' },
-      '奥村': { type: 'options', grade: '3年' },
-      '安元瞭太': { type: 'options', grade: '3年' },
-      '小松野': { type: 'options', grade: '4年' },
-      '岩下侑樹': { type: 'options', grade: '4年' },
-      '岩見樹': { type: 'options', grade: '4年' },
-      '帆保和将': { type: 'options', grade: '4年' }
+      'しもだ': { type: 'options', grade: '1年' },
+      'なかの': { type: 'options', grade: '1年' },
+      'きたおか': { type: 'options', grade: '2年' },
+      'ほりた': { type: 'options', grade: '2年' },
+      'おくむら': { type: 'options', grade: '3年' },
+      'やすもと': { type: 'options', grade: '3年' },
+      'こまつの': { type: 'options', grade: '4年' },
+      'いわた': { type: 'options', grade: '4年' },
+      'いわみ': { type: 'options', grade: '4年' },
+      'ほほ': { type: 'options', grade: '4年' }
     };
 
-    // 自然な声で読み上げる関数
+    // 音声読み上げ処理
     function speak(text) {
       speechSynthesis.cancel();
       const uttr = new SpeechSynthesisUtterance(text);
@@ -248,6 +254,9 @@
       currentStudent = name;
       speak(name);
 
+      // 名前選択画面を非表示にする
+      document.getElementById('top-screen').style.display = 'none';
+
       // カテゴリーメニューを表示する
       const panel = document.getElementById('category-panel');
       const title = document.getElementById('selected-student-title');
@@ -264,15 +273,12 @@
         const student = studentsData[currentStudent] || { type: 'options', grade: '1年' };
 
         if (student.type === 'teacher') {
-          // 「せんせい」読み上げタイプの生徒
           speak('せんせい');
         } else {
-          // 選択肢タイプの生徒 ➔ 学年ごとのメニューを開く
           speak('きゅうけい');
           showKyukeiOptions(student.grade);
         }
       } else {
-        // 「あさのきぶん」「さぎょう」「おつかれさま」を選んだ場合
         speak(category);
       }
     }
@@ -297,10 +303,11 @@
       kyukeiPanel.style.display = 'block';
     }
 
-    // モード・パネルを閉じる処理
+    // トップ画面に戻る処理
     function closeAllPanels() {
       document.getElementById('category-panel').style.display = 'none';
       document.getElementById('kyukei-panel').style.display = 'none';
+      document.getElementById('top-screen').style.display = 'block';
     }
 
     function closeKyukeiPanel() {
